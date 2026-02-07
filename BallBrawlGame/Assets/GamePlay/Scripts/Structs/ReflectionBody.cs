@@ -28,6 +28,7 @@ public struct ReflectionBody
     public float ReturnYForce(Collision2D col , float Power)
     {
         var speed = LastVelocity.magnitude * Power;
+
         
         Vector2 direction = Vector2.Reflect(LastVelocity.normalized,col.contacts[0].normal).normalized;
        

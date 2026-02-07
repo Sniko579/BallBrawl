@@ -1,5 +1,4 @@
-﻿using UnityEditor.Rendering;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
@@ -45,7 +44,7 @@ public class Movement : MonoBehaviour
     //statics
     public static bool IsDashing;
 
-    
+
     [Header("Bounce Setting")]
     [SerializeField] float PowerReflection = 0.4f;
 
@@ -228,21 +227,21 @@ public class Movement : MonoBehaviour
     // Check Collisions 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.CompareTag("Ground"))
-        {
-            IsGrounded = true;
-        }
 
         _dashTimer = -1;
         IsDashing = false;
         _stopDash = false;
 
-
         _targetMove = S_ReflectionBody.ReturnForce(collision, PowerReflection);
-        
-        RB.linearVelocity = S_ForceMove.GetForce(_targetMove);
 
-
+        if (collision.transform.CompareTag("Ground"))
+        {
+            IsGrounded = true;
+            RB.linearVelocityX = S_ForceMove.GetXForceByT(_targetMove.x, Deceleration);
+            RB.linearVelocityY = S_ForceMove.GetYForce(_targetMove.y);
+        }
+        else
+            RB.linearVelocity = S_ForceMove.GetForce(_targetMove);
     }
 
     private void OnCollisionExit2D(Collision2D collision)

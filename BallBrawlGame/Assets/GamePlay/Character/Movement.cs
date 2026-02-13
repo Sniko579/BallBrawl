@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Movement : MonoBehaviour
+public class Movement : MonoBehaviour , IPVP
 {
     public static Rigidbody2D RB;
 
@@ -46,7 +46,7 @@ public class Movement : MonoBehaviour
 
 
     [Header("Bounce Setting")]
-    [SerializeField] float PowerReflection = 0.4f;
+    [SerializeField][Range(0f, 100f)] float PowerReflection = 0.4f;
 
     // privates
     ReflectionBody S_ReflectionBody;
@@ -63,9 +63,8 @@ public class Movement : MonoBehaviour
 
 
         RB = GetComponent<Rigidbody2D>();
-
+        
         S_ReflectionBody = new ReflectionBody();
-        S_ForceMove = new PhysicForce();
     }
 
     void Start()
@@ -80,7 +79,7 @@ public class Movement : MonoBehaviour
         ApplyJump(InputManager.Jump);
 
         S_ForceMove.SetCurrentVelocity(RB.linearVelocity);
-        S_ReflectionBody.SetVelocity(RB.linearVelocity);
+        S_ReflectionBody.SetVelocity(RB.linearVelocity , "Updating Player");
     }
     private void FixedUpdate()
     {
@@ -255,5 +254,9 @@ public class Movement : MonoBehaviour
 
     }
 
+    public ReflectionBody GetReflectionBody()
+    {
+        return S_ReflectionBody;
+    }
 
 }

@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraDistance : MonoBehaviour
@@ -91,8 +92,10 @@ public class CameraDistance : MonoBehaviour
         _cameraDownLimet = _cameraBox.y - DistanceYDown;
     }
 
-
-    private void OnDrawGizmos()
+    
+   
+   
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawRay(_cameraBox, Vector2.right * DistanceX);
@@ -102,7 +105,6 @@ public class CameraDistance : MonoBehaviour
         Gizmos.DrawRay(_cameraBox, Vector2.up * DistanceYUp);
         Gizmos.DrawRay(_cameraBox, Vector2.down * DistanceYDown);
     }
-
 
 
 }

@@ -1,13 +1,13 @@
 using UnityEngine;
 
-[RequireComponent (typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class PVP : MonoBehaviour
 {
     Rigidbody2D _rb;
     [Header("Power")]
-    [SerializeField] float ShootingPower = 1f;
+    [SerializeField][Range(0f, 100f)] float ShootingPower = 1f;
     [Header("Resistance")]
-    [SerializeField] float ShootingResistance = 1f;
+    [SerializeField][Range(1f, 100f)] float ShootingResistance = 1f;
 
     private Vector2 _lastVelocity;
     public void Awake()
@@ -18,13 +18,22 @@ public class PVP : MonoBehaviour
     {
         _lastVelocity = _rb.linearVelocity;
     }
-    public void Shoot(Collision2D _Collision, Vector2 _Velocity)
+    public void Shoot(PVP _EnemyPVP, Vector2 _Velocity)
     {
-        
+        float _shootPower = ShootingPower / 100;
+        _EnemyPVP.BeShoot(_Velocity * _shootPower);
+    }
+    public void BeShoot(Vector2 _EnemyVelocity)
+    {
+        float _shootResistance = ShootingResistance / 100;
+        _rb.linearVelocity += _EnemyVelocity * _shootResistance;
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Shoot(collision, _lastVelocity);
+        PVP enemyPvP = collision.gameObject.GetComponent<PVP>();
+        if (enemyPvP != null)
+            Shoot(enemyPvP, _lastVelocity);
     }
 }

@@ -3171,7 +3171,7 @@ GameObject:
   - component: {fileID: 268275733}
   m_Layer: 0
   m_Name: RedGoal (1)
-  m_TagString: Untagged
+  m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3184,7 +3184,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 268275731}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 14.14, y: 1.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3254,7 +3254,7 @@ GameObject:
   - component: {fileID: 388373932}
   m_Layer: 0
   m_Name: GreenGoal (2)
-  m_TagString: Untagged
+  m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3471,7 +3471,7 @@ Transform:
   m_GameObject: {fileID: 402912850}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.6237618, y: -1.267929, z: 0}
+  m_LocalPosition: {x: 0, y: 1.04, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3489,7 +3489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9041d186ea7d3e47aa92fd2430e0714, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BouncePower: 80
+  ReflectionPower: 80
   Deceleration: 0.5
 --- !u!1 &515637251
 GameObject:
@@ -3504,7 +3504,7 @@ GameObject:
   - component: {fileID: 515637253}
   m_Layer: 0
   m_Name: GreenGoal
-  m_TagString: Untagged
+  m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4528,7 +4528,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 770354070}
-  - component: {fileID: 770354069}
   m_Layer: 0
   m_Name: GoalsManager
   m_TagString: Untagged
@@ -4536,18 +4535,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &770354069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770354068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 908638244d5471f4ca52657d18400e62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &770354070
 Transform:
   m_ObjectHideFlags: 0
@@ -5288,7 +5275,7 @@ GameObject:
   - component: {fileID: 1524788351}
   - component: {fileID: 1524788350}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5410,10 +5397,8 @@ GameObject:
   - component: {fileID: 1673455887}
   - component: {fileID: 1673455886}
   - component: {fileID: 1673455889}
-  - component: {fileID: 1673455888}
-  - component: {fileID: 1673455891}
-  - component: {fileID: 1673455890}
   - component: {fileID: 1673455893}
+  - component: {fileID: 1673455894}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -5485,38 +5470,12 @@ Transform:
   m_GameObject: {fileID: 1673455884}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.05, y: -0.28, z: 0}
+  m_LocalPosition: {x: -13.51, y: -3.07, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1673455888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1673455884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bab2c5d3b41f064d92f4fb18d2c3151, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MoveSpeed: 8
-  JumpHeight: 6
-  Acceleration: 10
-  AirAcceleration: 2
-  Deceleration: 5
-  DashSpeed: 50
-  DashTime: 0.11
-  DashCoolDown: 0.6
-  DashAcceleration: 8
-  DashDeceleration: 4
-  PowerReflection: 50
-  NoramlGravity: 1.3
-  FallGravity: 1.6
-  DashGravity: 0
 --- !u!50 &1673455889
 Rigidbody2D:
   serializedVersion: 5
@@ -5544,42 +5503,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &1673455890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1673455884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8142acb9c9a62b340bbfda7e37930783, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HitGroundClip: {fileID: 7400000, guid: 43bbecf9e02cc6b4b80a9025242184b9, type: 2}
-  JumpClip: {fileID: 7400000, guid: 65b4ccb5a20df8046ac272f7b78c727f, type: 2}
---- !u!95 &1673455891
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1673455884}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 80fb149f23a9d9e41afda478a204597d, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!70 &1673455893
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -5617,6 +5540,19 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 1}
   m_Direction: 0
+--- !u!114 &1673455894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1673455884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c492fd75a226a0429e7092026a76ef3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Sc_GlobalVariables: {fileID: 11400000, guid: a2d004c39c223df45806e6408c41d038, type: 2}
 --- !u!1 &1685177337
 GameObject:
   m_ObjectHideFlags: 0
@@ -5630,7 +5566,7 @@ GameObject:
   - component: {fileID: 1685177339}
   m_Layer: 0
   m_Name: RedGoal (2)
-  m_TagString: Untagged
+  m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5643,7 +5579,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1685177337}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 14.26, y: -1.73, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5719,7 +5655,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!70 &1834694502
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -5848,7 +5784,7 @@ Transform:
   m_GameObject: {fileID: 1834694500}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.15, y: -0.4, z: 0}
+  m_LocalPosition: {x: -9.72, y: 0.51, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5866,8 +5802,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb6b2c5fa2790d42917d9ff686250d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Target: {fileID: 402912854}
-  MoveSpeed: 8
+  Sc_GlobalVariables: {fileID: 11400000, guid: a2d004c39c223df45806e6408c41d038, type: 2}
+  Target: {fileID: 402912854}
+  AttackDistance: 3
 --- !u!1 &1877523912
 GameObject:
   m_ObjectHideFlags: 0
@@ -5881,7 +5818,7 @@ GameObject:
   - component: {fileID: 1877523914}
   m_Layer: 0
   m_Name: RedGoal
-  m_TagString: Untagged
+  m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5894,7 +5831,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1877523912}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 14.14, y: 4.95, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5964,7 +5901,7 @@ GameObject:
   - component: {fileID: 2099407550}
   m_Layer: 0
   m_Name: GreenGoal (1)
-  m_TagString: Untagged
+  m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

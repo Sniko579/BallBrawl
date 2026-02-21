@@ -10,12 +10,12 @@ public class Jump : IState
     public void OnUpdate(StateMachine state)
     {
 
-        if (Movement.RB.linearVelocityY < -0.1f)
+        if (Player.RB.linearVelocityY < -0.1f)
         {
 
             state.ChangeState(new Fall());
         }
-        else if (Movement.IsGrounded)
+        else if (Player.IsGrounded)
         {
             state.ChangeState(new Idel());
         }

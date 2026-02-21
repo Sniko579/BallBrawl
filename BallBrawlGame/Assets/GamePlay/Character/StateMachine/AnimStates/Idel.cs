@@ -9,11 +9,11 @@ public class Idel : IState
     public void OnUpdate(StateMachine state)
     {
 
-        if (Movement.RB.linearVelocityY > 0.1f)
+        if (Player.RB.linearVelocityY > 0.1f)
         {
             state.ChangeState(new Jump());
         }
-        else if (Movement.RB.linearVelocityY < -0.1f)
+        else if (Player.RB.linearVelocityY < -0.1f)
         {
             state.ChangeState(new Fall());
         }

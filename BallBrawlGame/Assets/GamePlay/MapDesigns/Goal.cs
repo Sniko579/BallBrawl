@@ -18,26 +18,10 @@ public class Goal : MonoBehaviour
     }
     void Start()
     {
-
+        GetComponent<CircleCollider2D>().radius = Radius;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ball"))
-        {
-
-            collision.transform.position = Vector3.zero;
-
-        }
-    }
-
-
+  
     private void OnDrawGizmos()
     {
         switch (colorState)

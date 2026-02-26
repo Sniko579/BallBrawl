@@ -5,8 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 {
-    [Header("Require")]
+    [Header("Requires")]
     [SerializeField] GlobalVariables Sc_GlobalVariables;
+    [SerializeField] Transform[] EnemyGoals;
     public static Rigidbody2D RB;
 
     private TreeManager behaiorTree;
@@ -14,12 +15,16 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     [Header("Follow Target")]
     [SerializeField] Transform Target;
     [SerializeField] float AttackDistance;
-
+    [SerializeField] float FollowDistance;
+    [SerializeField] LayerMask GoalsLayer;
     //private
     private Vector2[] _targetPoints = new Vector2[3];
 
+    private Vector2 _currentTarget;
 
-    #region Movement
+
+
+    #region Movement Var
 
     float _moveSpeed;
     float _acceleration;
@@ -30,7 +35,7 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
     #endregion
 
-    #region Dash
+    #region Dash Var
     float _dashSpeed = 50;
     float _dashTime = 0.5f;
     float _dashCoolDown = 0.5f;
@@ -91,22 +96,19 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     {
         setTargetPoints();
     }
-    private void Awake()
-    {
 
-    }
     private void Start()
     {
         setTargetPoints();
         RB = GetComponent<Rigidbody2D>();
         BehaviorInitializing();
 
-
     }
     private void Update()
     {
         s_ForceMove.SetCurrentVelocity(RB.linearVelocity);
         s_ReflectionBody.SetVelocity(RB.linearVelocity);
+
     }
     private void FixedUpdate()
     {
@@ -119,30 +121,24 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
 
     #region Actions
-    private NodeState followTarget()
+    private NodeState FollowTarget()
     {
-        //if (Target.position.x < transform.position.x)
-        //{
-        _targetMove.x = NormalDir(Target.position).x * _moveSpeed;
-        //}
-        //else
-        //{
-        //    _dashDirection = TargetDir();
-        //    return NodeState.Fail;
-        //}
-        RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, _acceleration).x;
+        if (Vector2.Distance(transform.position, _currentTarget) < FollowDistance)
+        {
+            _targetMove.x = NearestTargetPoint().x * _moveSpeed;
+            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, _acceleration).x;
+        }
+        else
+        {
+            DashHandler(NearestTargetPoint());
+        }
+
         return NodeState.Running;
     }
 
     private NodeState Shoot()
     {
-        Dash(_dashAttackDirection);
-
-        return NodeState.Running;
-    }
-    private NodeState DashToTarget()
-    {
-        Dash(NearestTargetPoint());
+        DashHandler(_dashAttackDirection);
 
         return NodeState.Running;
     }
@@ -150,14 +146,29 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
     #endregion
 
+
     #region Conditions 
+
+
     private bool IsInAttackRange()
     {
         _dashAttackDirection = NormalDir(Target.position); // For Dash !
         return Vector2.Distance(transform.position, Target.position) < AttackDistance;
     }
 
+    private bool FoundShootPoint()
+    {
+        Vector2 normal = (transform.position - Target.position).normalized;
 
+        //_dashAttackDirection = Vector2.Reflect(NormalDir(Target.position), normal);
+
+
+        Debug.Log(_dashAttackDirection);
+
+
+        RaycastHit2D raycast = Physics2D.Raycast(Target.position, _dashAttackDirection, 10f, GoalsLayer);
+        return true;
+    }
 
     #endregion
 
@@ -165,27 +176,32 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     // AGENT 🧠:
     private void BehaviorInitializing()
     {
-        var attackSequence = new Sequence(new List<Node>
+        var ShootSequence = new Sequence(new List<Node>
         {
             new ConditionNode(IsInAttackRange),
             new ActionNode(Shoot),
         });
 
-        var _root = new Selector(new List<Node>
-        {
-            attackSequence,
-            new ActionNode(DashToTarget),
 
+
+        // Main Root
+        var MainRoot = new Selector(new List<Node>
+        {
+            ShootSequence,
+            new ActionNode(FollowTarget)
         });
 
-        behaiorTree = new TreeManager(_root);
+        // Apply Data
+        behaiorTree = new TreeManager(MainRoot);
     }
 
 
-    // Handler 🧮 :
+    // Maths 🧮 :
     private Vector2 NormalDir(Vector2 _target)
     {
         Vector2 result;
+
+        _currentTarget = _target;
 
         result.x = transform.position.x < _target.x ? 1 : 0;
         result.y = transform.position.y < _target.y ? 1 : 0;
@@ -194,7 +210,40 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
         return result;
     }
-    private void Dash(Vector2 direction)
+    private Vector2 NearestTargetPoint()
+    {
+        float smalest = Vector2.Distance(transform.position, _targetPoints[0]);
+        Vector2 nearestPoint = _targetPoints[0];
+        for (int i = 1; i < _targetPoints.Length; i++)
+        {
+            if (Vector2.Distance(transform.position, _targetPoints[i]) < smalest)
+            {
+                smalest = Vector2.Distance(transform.position, _targetPoints[i]);
+                nearestPoint = _targetPoints[i];
+            }
+        }
+
+        return NormalDir(nearestPoint);
+    }
+    private Vector2 NearsetGoal(Transform[] goals)
+    {
+        Vector2 nearestGoal = goals[0].position;
+        for (int i = 1; i < goals.Length; i++)
+        {
+            float a = Vector2.Distance(nearestGoal, Target.position);
+            float b = Vector2.Distance(Target.position, goals[i].position);
+            if (a > b)
+            {
+                nearestGoal = goals[i].position;
+            }
+        }
+
+        return nearestGoal;
+    }
+
+
+    // Handler :
+    private void DashHandler(Vector2 direction)
     {
         if (_dashTimer > 0)
         {
@@ -220,6 +269,7 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
         }
 
     }
+
     private void GravityHandler()
     {
         if (IsDashing)
@@ -229,33 +279,24 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
         else
             RB.gravityScale = _noramlGravity;
     }
-    private Vector2 NearestTargetPoint()
-    {
-        float smalest = Vector2.Distance(transform.position, _targetPoints[0]);
-        Vector2 nearestPoint = _targetPoints[0];
-        for (int i = 1; i < _targetPoints.Length; i++)
-        {
-            if (Vector2.Distance(transform.position, _targetPoints[i]) < smalest)
-            {
-                smalest = Vector2.Distance(transform.position, _targetPoints[i]);
-                nearestPoint = _targetPoints[i];
-            }
-        }
 
-        return NormalDir(nearestPoint);
-    }
+
 
     //intitializing
     private void setTargetPoints()
     {
-        Vector2 n = new Vector2(1,0).normalized * AttackDistance;
-        Vector2 n1 = new Vector2(1,1).normalized * AttackDistance;
-        Vector2 n2 = new Vector2(1,-1).normalized * AttackDistance;
-        
+        Vector2 n = new Vector2(1, 0).normalized * (AttackDistance - 0.3f);
+        Vector2 n1 = new Vector2(1, 1).normalized * (AttackDistance - 0.3f);
+        Vector2 n2 = new Vector2(1, -1).normalized * (AttackDistance - 0.3f);
+        /////////////////                               ///////////////////////
         _targetPoints[0] = new Vector2(Target.position.x, Target.position.y) + n;
         _targetPoints[1] = new Vector2(Target.position.x, Target.position.y) + n1;
         _targetPoints[2] = new Vector2(Target.position.x, Target.position.y) + n2;
     }
+
+
+
+
     // Unity Functions
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -270,12 +311,40 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, AttackDistance);
 
-
         Gizmos.color = Color.blue;
         foreach (var point in _targetPoints)
             Gizmos.DrawSphere(point, 0.2f);
 
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(Target.position, NearsetGoal(EnemyGoals));
+
 
     }
+
+}
+
+
+public struct Points
+{
+    public Vector2[] AttackPoints { private set; get; }
+    public Vector2[] FollowPoints { private set; get; }
+    
+    public void SetAttackPoints(Vector2[] points)
+    {
+        AttackPoints = points;
+    }
+    public void SetFollowPoints(Vector2[] points)
+    {
+       FollowPoints = points;
+    }
+
+    public Vector2 Target => CurrentTarget();
+
+    Vector2 CurrentTarget()
+    {
+
+        return Target;
+    }
+
 
 }

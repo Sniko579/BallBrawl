@@ -3252,7 +3252,7 @@ GameObject:
   - component: {fileID: 388373931}
   - component: {fileID: 388373933}
   - component: {fileID: 388373932}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GreenGoal (2)
   m_TagString: Goal
   m_Icon: {fileID: 0}
@@ -3471,7 +3471,7 @@ Transform:
   m_GameObject: {fileID: 402912850}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.04, z: 0}
+  m_LocalPosition: {x: -5.33, y: -1.28, z: 0}
   m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3502,7 +3502,7 @@ GameObject:
   - component: {fileID: 515637252}
   - component: {fileID: 515637254}
   - component: {fileID: 515637253}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GreenGoal
   m_TagString: Goal
   m_Icon: {fileID: 0}
@@ -5405,7 +5405,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1673455886
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5784,7 +5784,7 @@ Transform:
   m_GameObject: {fileID: 1834694500}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.72, y: 0.51, z: 0}
+  m_LocalPosition: {x: 10.34, y: -2.33, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5803,8 +5803,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Sc_GlobalVariables: {fileID: 11400000, guid: a2d004c39c223df45806e6408c41d038, type: 2}
+  EnemyGoals:
+  - {fileID: 515637252}
+  - {fileID: 2099407549}
+  - {fileID: 388373931}
   Target: {fileID: 402912854}
   AttackDistance: 3
+  FollowDistance: 4
+  GoalsLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1877523912
 GameObject:
   m_ObjectHideFlags: 0
@@ -5899,7 +5907,7 @@ GameObject:
   - component: {fileID: 2099407549}
   - component: {fileID: 2099407551}
   - component: {fileID: 2099407550}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GreenGoal (1)
   m_TagString: Goal
   m_Icon: {fileID: 0}

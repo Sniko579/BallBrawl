@@ -21,7 +21,7 @@ MonoBehaviour:
   DashTime: 0.11
   DashCoolDown: 0.6
   DashAcceleration: 6
-  DashDeceleration: 4
+  DashDeceleration: 2.98
   ReflectionPower: 50
   NoramlGravity: 1.2
   FallGravity: 1.5

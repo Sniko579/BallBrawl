@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour, IPVP
 {
-    Rigidbody2D _rb;
+    public static Rigidbody2D RB;
     ReflectionBody _reflectionBody;
     PhysicForce _forceMove;
-    Vector2 _targetMove;
+    public static Vector2 TargetMove;
 
     Vector2 spwonPoint;
 
@@ -22,15 +22,15 @@ public class Ball : MonoBehaviour, IPVP
     }
     void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
+        RB = GetComponent<Rigidbody2D>();
         spwonPoint = transform.position;
     }
 
 
     void Update()
     {
-        _reflectionBody.SetVelocity(_rb.linearVelocity);
-        _forceMove.SetCurrentVelocity(_rb.linearVelocity);
+        _reflectionBody.SetVelocity(RB.linearVelocity);
+        _forceMove.SetCurrentVelocity(RB.linearVelocity);
 
     }
 
@@ -43,8 +43,8 @@ public class Ball : MonoBehaviour, IPVP
     private void DecelerationMove()
     {
 
-        _targetMove.x = Vector2.zero.x;
-        _rb.linearVelocityX = _forceMove.GetForceByT(_targetMove, Deceleration).x;
+        TargetMove.x = Vector2.zero.x;
+        RB.linearVelocityX = _forceMove.GetForceByT(TargetMove, Deceleration).x;
 
     }
 
@@ -57,8 +57,8 @@ public class Ball : MonoBehaviour, IPVP
         }
         
 
-        _targetMove = _reflectionBody.ReturnForce(collision, ReflectionPower);
-        _rb.linearVelocity = _targetMove;
+        TargetMove = _reflectionBody.ReturnForce(collision, ReflectionPower);
+        RB.linearVelocity = TargetMove;
 
     }
 
@@ -73,7 +73,7 @@ public class Ball : MonoBehaviour, IPVP
         if (collision.gameObject.CompareTag("Goal"))
         {
             transform.position = spwonPoint;
-            _rb.linearVelocity = Vector2.zero;
+            RB.linearVelocity = Vector2.zero;
         }
         
     }

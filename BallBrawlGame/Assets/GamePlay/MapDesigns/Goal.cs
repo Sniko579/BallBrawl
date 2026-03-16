@@ -36,4 +36,14 @@ public class Goal : MonoBehaviour
 
         Gizmos.DrawWireSphere(transform.position, Radius);
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ball"))
+        {
+            collision.transform.position = Vector2.zero;
+            collision.GetComponent<Ball>().IsInGoal();
+        }    
+    }
+
 }

@@ -167,7 +167,6 @@ public class Player : MonoBehaviour, IPVP, IGlobalData
 
     void MoveOnDashAcceleration()
     {
-
         _targetMove = _dashDirection * _dashSpeed;
         RB.linearVelocity = S_ForceMove.GetForceByT(_targetMove, _dashAcceleration);
     }
@@ -188,7 +187,7 @@ public class Player : MonoBehaviour, IPVP, IGlobalData
         if ((input && IsGrounded) && Mathf.Abs(_targetMove.y) < _jumpHeight)
         {
             _targetMove.y = _jumpHeight;
-            RB.linearVelocityY = S_ForceMove.GetForce(_targetMove).y;
+            RB.linearVelocityY = _targetMove.y;
         }
 
     }
@@ -263,10 +262,10 @@ public class Player : MonoBehaviour, IPVP, IGlobalData
         {
             IsGrounded = true;
             RB.linearVelocityX = S_ForceMove.GetForceByT(_targetMove, _deceleration).x;
-            RB.linearVelocityY = S_ForceMove.GetForce(_targetMove).y;
+            RB.linearVelocityY = _targetMove.y;
         }
         else
-            RB.linearVelocity = S_ForceMove.GetForce(_targetMove);
+            RB.linearVelocity = _targetMove;
 
     }
 

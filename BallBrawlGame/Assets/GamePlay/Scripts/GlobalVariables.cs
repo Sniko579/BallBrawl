@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GlobalVariables", menuName = "Scriptable Objects/GlobalVariables")]
@@ -44,6 +45,7 @@ public class GlobalVariables : ScriptableObject
 }
 
 public interface IGlobalData
-{
+{      
     void UpdateVaribles();
+
 }

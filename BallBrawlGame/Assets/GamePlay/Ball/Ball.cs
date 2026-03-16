@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ball : MonoBehaviour, IPVP
@@ -8,7 +7,7 @@ public class Ball : MonoBehaviour, IPVP
     PhysicForce _forceMove;
     public static Vector2 TargetMove;
 
-    Vector2 spwonPoint;
+
 
     [SerializeField][Range(0f, 100f)] float ReflectionPower = 0.5f;
 
@@ -23,7 +22,7 @@ public class Ball : MonoBehaviour, IPVP
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
-        spwonPoint = transform.position;
+
     }
 
 
@@ -47,7 +46,11 @@ public class Ball : MonoBehaviour, IPVP
         RB.linearVelocityX = _forceMove.GetForceByT(TargetMove, Deceleration).x;
 
     }
-
+    public void IsInGoal()
+    {
+        TargetMove = Vector2.zero;
+        RB.linearVelocity = TargetMove;
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -55,7 +58,7 @@ public class Ball : MonoBehaviour, IPVP
         {
             _isGround = true;
         }
-        
+
 
         TargetMove = _reflectionBody.ReturnForce(collision, ReflectionPower);
         RB.linearVelocity = TargetMove;
@@ -68,15 +71,7 @@ public class Ball : MonoBehaviour, IPVP
     }
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Goal"))
-        {
-            transform.position = spwonPoint;
-            RB.linearVelocity = Vector2.zero;
-        }
-        
-    }
+
 
 
 }

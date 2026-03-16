@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4db576bc1b9a0440bb019a3be5da482, type: 3}
   m_Name: GlobalVariables
   m_EditorClassIdentifier: 
-  MoveSpeed: 8
-  JumpHeight: 6
+  MoveSpeed: 9
+  JumpHeight: 8
   Acceleration: 10
   AirAcceleration: 2
   Deceleration: 5
-  DashSpeed: 50
-  DashTime: 0.11
+  DashSpeed: 40
+  DashTime: 0.09
   DashCoolDown: 0.6
-  DashAcceleration: 6
-  DashDeceleration: 2.98
+  DashAcceleration: 10
+  DashDeceleration: 1.8
   ReflectionPower: 50
   NoramlGravity: 1.2
   FallGravity: 1.5
-  DashGravity: 0
+  DashGravity: 0.6

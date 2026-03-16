@@ -7,28 +7,28 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 {
     [Header("Requires")]
     [SerializeField] GlobalVariables Sc_GlobalVariables;
-    [SerializeField] Transform[] EnemyGoals;
+
     public static Rigidbody2D RB;
 
     private TreeManager behaiorTree;
 
     [Header("Follow Target")]
     [SerializeField] Transform Target;
-    [SerializeField] float AttackDistance;
-    [SerializeField] float FollowDistance;
-    [SerializeField] LayerMask GoalsLayer;
-    //private
-    private Vector2[] _targetPoints = new Vector2[3];
+    [SerializeField] float ZoneRadius;
+    [SerializeField] Transform ShootPoint;
 
-    private Vector2 _currentTarget;
 
+    bool _isGround;
+    bool _isInShootPoint;
 
 
     #region Movement Var
 
     float _moveSpeed;
     float _acceleration;
+    float _airAcceleration;
 
+    float _jumpHeight;
     //private
     private Vector2 _targetMove;
     private PhysicForce s_ForceMove;
@@ -42,27 +42,30 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     float _dashAcceleration = 20f;
     float _dashDeceleration = 20f;
 
-    bool _canDash, _stopDash;
     float _dashTimer;
     float _dashCoolDownTimer;
     Vector2 _dashAttackDirection;
     Vector2 _dashDirection;
+    bool _dashHasFinished;
 
     public static bool IsDashing;
+
     #endregion
 
-    #region Bounceness System
+    #region Bounceness System Var
 
     float _reflectionPower;
     ReflectionBody s_ReflectionBody;
 
     #endregion
 
-    #region Gravity
+    #region Gravity Var
     float _noramlGravity;
     float _fallGravity;
     float _dashGravity;
     #endregion
+
+
 
     private void OnEnable()
     {
@@ -90,18 +93,19 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
         // Movement
         _moveSpeed = Sc_GlobalVariables.MoveSpeed;
         _acceleration = Sc_GlobalVariables.Acceleration;
+        _airAcceleration = Sc_GlobalVariables.AirAcceleration;
+        _jumpHeight = Sc_GlobalVariables.JumpHeight;
     }
 
-    private void OnValidate()
-    {
-        setTargetPoints();
-    }
+
 
     private void Start()
     {
-        setTargetPoints();
+
         RB = GetComponent<Rigidbody2D>();
+
         BehaviorInitializing();
+
 
     }
     private void Update()
@@ -115,59 +119,70 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
         behaiorTree.Tike();
 
         GravityHandler();
-        setTargetPoints();
 
     }
 
 
     #region Actions
-    private NodeState FollowTarget()
+
+    private NodeState FollowNextPoint()
     {
-        if (Vector2.Distance(transform.position, _currentTarget) < FollowDistance)
+        if (_isGround)
         {
-            _targetMove.x = NearestTargetPoint().x * _moveSpeed;
+            RB.linearVelocityY = _targetMove.y;
             RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, _acceleration).x;
         }
         else
         {
-            DashHandler(NearestTargetPoint());
+            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, _airAcceleration).x;
         }
 
+
+        if (_isInShootPoint)
+        {
+            _targetMove.x = NormalDir(Target.position).x * _moveSpeed;
+        }
+        else
+        {
+            
+            if (Vector2.Distance(transform.position , Target.position) < ZoneRadius)
+            {
+                _targetMove.y = _jumpHeight;
+            }
+            _targetMove.x = NormalDir(ShootPoint.position).x * _moveSpeed;
+        }
+        
+
+
+
+        return NodeState.Running;
+    }
+
+    private NodeState DashToNextPoint()
+    {
+        Debug.Log("DashToNextPoint");
         return NodeState.Running;
     }
 
     private NodeState Shoot()
     {
-        DashHandler(_dashAttackDirection);
-
+        DashHandler(NormalDir(Target.position));
         return NodeState.Running;
     }
-
 
     #endregion
 
 
     #region Conditions 
-
+    private bool IsFarNextPoint()
+    {
+        //Debug.Log("IsNextPointDistance");
+        return false;
+    }
 
     private bool IsInAttackRange()
     {
-        _dashAttackDirection = NormalDir(Target.position); // For Dash !
-        return Vector2.Distance(transform.position, Target.position) < AttackDistance;
-    }
-
-    private bool FoundShootPoint()
-    {
-        Vector2 normal = (transform.position - Target.position).normalized;
-
-        //_dashAttackDirection = Vector2.Reflect(NormalDir(Target.position), normal);
-
-
-        Debug.Log(_dashAttackDirection);
-
-
-        RaycastHit2D raycast = Physics2D.Raycast(Target.position, _dashAttackDirection, 10f, GoalsLayer);
-        return true;
+        return (_isInShootPoint && Vector2.Distance(transform.position, Target.position) < ZoneRadius || !_dashHasFinished);
     }
 
     #endregion
@@ -176,19 +191,32 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     // AGENT 🧠:
     private void BehaviorInitializing()
     {
+
         var ShootSequence = new Sequence(new List<Node>
         {
             new ConditionNode(IsInAttackRange),
             new ActionNode(Shoot),
         });
 
+        var DashSequence = new Sequence(new List<Node>
+        {
+            new ConditionNode(IsFarNextPoint),
+            new ActionNode(DashToNextPoint),
+        });
+
+        var FollowSelector = new Selector(new List<Node>
+        {
+            DashSequence,
+            new ActionNode(FollowNextPoint),
+        });
 
 
         // Main Root
         var MainRoot = new Selector(new List<Node>
         {
-            ShootSequence,
-            new ActionNode(FollowTarget)
+           ShootSequence,
+           FollowSelector,
+
         });
 
         // Apply Data
@@ -196,12 +224,11 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     }
 
 
-    // Maths 🧮 :
+
+    // Mathematics 🧮 :
     private Vector2 NormalDir(Vector2 _target)
     {
         Vector2 result;
-
-        _currentTarget = _target;
 
         result.x = transform.position.x < _target.x ? 1 : 0;
         result.y = transform.position.y < _target.y ? 1 : 0;
@@ -210,43 +237,13 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
         return result;
     }
-    private Vector2 NearestTargetPoint()
-    {
-        float smalest = Vector2.Distance(transform.position, _targetPoints[0]);
-        Vector2 nearestPoint = _targetPoints[0];
-        for (int i = 1; i < _targetPoints.Length; i++)
-        {
-            if (Vector2.Distance(transform.position, _targetPoints[i]) < smalest)
-            {
-                smalest = Vector2.Distance(transform.position, _targetPoints[i]);
-                nearestPoint = _targetPoints[i];
-            }
-        }
-
-        return NormalDir(nearestPoint);
-    }
-    private Vector2 NearsetGoal(Transform[] goals)
-    {
-        Vector2 nearestGoal = goals[0].position;
-        for (int i = 1; i < goals.Length; i++)
-        {
-            float a = Vector2.Distance(nearestGoal, Target.position);
-            float b = Vector2.Distance(Target.position, goals[i].position);
-            if (a > b)
-            {
-                nearestGoal = goals[i].position;
-            }
-        }
-
-        return nearestGoal;
-    }
-
 
     // Handler :
     private void DashHandler(Vector2 direction)
     {
         if (_dashTimer > 0)
         {
+            _dashHasFinished = false;
             _dashTimer -= Time.fixedDeltaTime;
             IsDashing = true;
 
@@ -258,18 +255,18 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
             _dashCoolDownTimer -= Time.fixedDeltaTime;
             IsDashing = false;
 
-            _targetMove.x = Vector2.one.x * (NormalDir(Target.position).x * 3);
+            _targetMove.x = Vector2.one.x;
             _targetMove.y = Vector2.one.y;
             RB.linearVelocity = s_ForceMove.GetForceByT(_targetMove, _dashDeceleration);
         }
         else
         {
+            _dashHasFinished = true;
             _dashTimer = _dashTime;
             _dashCoolDownTimer = _dashCoolDown;
         }
 
     }
-
     private void GravityHandler()
     {
         if (IsDashing)
@@ -282,69 +279,59 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
 
 
-    //intitializing
-    private void setTargetPoints()
-    {
-        Vector2 n = new Vector2(1, 0).normalized * (AttackDistance - 0.3f);
-        Vector2 n1 = new Vector2(1, 1).normalized * (AttackDistance - 0.3f);
-        Vector2 n2 = new Vector2(1, -1).normalized * (AttackDistance - 0.3f);
-        /////////////////                               ///////////////////////
-        _targetPoints[0] = new Vector2(Target.position.x, Target.position.y) + n;
-        _targetPoints[1] = new Vector2(Target.position.x, Target.position.y) + n1;
-        _targetPoints[2] = new Vector2(Target.position.x, Target.position.y) + n2;
-    }
-
-
-
 
     // Unity Functions
     private void OnCollisionEnter2D(Collision2D collision)
     {
         _targetMove = s_ReflectionBody.ReturnForce(collision, _reflectionPower);
-        RB.linearVelocity = _targetMove;
+
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _isGround = true;
+            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, Sc_GlobalVariables.Deceleration).x;
+            RB.linearVelocityY = _targetMove.y;
+        }
+        else
+            RB.linearVelocity = _targetMove;
+
+
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+
+        _isGround = false;
+
 
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("ShootPoint"))
+        {
+            _isInShootPoint = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("ShootPoint"))
+        {
+            _isInShootPoint = false;
+        }
 
-    private void OnDrawGizmosSelected()
+    }
+
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, AttackDistance);
-
-        Gizmos.color = Color.blue;
-        foreach (var point in _targetPoints)
-            Gizmos.DrawSphere(point, 0.2f);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(Target.position, NearsetGoal(EnemyGoals));
+        Gizmos.DrawWireSphere(Target.position, ZoneRadius);
 
 
     }
+
+
 
 }
 
 
-public struct Points
-{
-    public Vector2[] AttackPoints { private set; get; }
-    public Vector2[] FollowPoints { private set; get; }
-    
-    public void SetAttackPoints(Vector2[] points)
-    {
-        AttackPoints = points;
-    }
-    public void SetFollowPoints(Vector2[] points)
-    {
-       FollowPoints = points;
-    }
-
-    public Vector2 Target => CurrentTarget();
-
-    Vector2 CurrentTarget()
-    {
-
-        return Target;
-    }
 
 
-}

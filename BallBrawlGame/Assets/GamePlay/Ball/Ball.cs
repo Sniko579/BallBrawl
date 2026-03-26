@@ -1,18 +1,16 @@
 using UnityEngine;
 
-public class Ball : MonoBehaviour, IPVP
+public class Ball : MonoBehaviour , IPVP
 {
     public static Rigidbody2D RB;
-    ReflectionBody _reflectionBody;
     PhysicForce _forceMove;
-    public static Vector2 TargetMove;
+    Vector2 _targetMove;
 
-
-
-    [SerializeField][Range(0f, 100f)] float ReflectionPower = 0.5f;
 
     [SerializeField] float Deceleration;
     private bool _isGround;
+
+
 
     private void OnValidate()
     {
@@ -21,6 +19,7 @@ public class Ball : MonoBehaviour, IPVP
     }
     void Start()
     {
+
         RB = GetComponent<Rigidbody2D>();
 
     }
@@ -28,8 +27,9 @@ public class Ball : MonoBehaviour, IPVP
 
     void Update()
     {
-        _reflectionBody.SetVelocity(RB.linearVelocity);
+
         _forceMove.SetCurrentVelocity(RB.linearVelocity);
+
 
     }
 
@@ -38,31 +38,53 @@ public class Ball : MonoBehaviour, IPVP
         if (_isGround)
             DecelerationMove();
 
+
     }
     private void DecelerationMove()
     {
 
-        TargetMove.x = Vector2.zero.x;
-        RB.linearVelocityX = _forceMove.GetForceByT(TargetMove, Deceleration).x;
+        _targetMove.x = Vector2.zero.x;
+        RB.linearVelocityX = _forceMove.GetForceByT(_targetMove, Deceleration).x;
 
     }
     public void IsInGoal()
     {
-        TargetMove = Vector2.zero;
-        RB.linearVelocity = TargetMove;
+        _targetMove = Vector2.zero;
+        RB.linearVelocity = _targetMove;
     }
 
+
     private void OnCollisionEnter2D(Collision2D collision)
+    {
+
+
+
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _isGround = true;
+
+        }
+        if (collision.gameObject.GetComponent<IPVP>() != null && _isGround)
+        {
+
+            float x = Mathf.Abs(collision.rigidbody.linearVelocity.y);
+            _targetMove.y = Vector2.up.y * x;
+      
+            RB.linearVelocityY = _targetMove.y;
+        }
+
+
+    }
+
+
+    private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
             _isGround = true;
+
+
         }
-
-
-        TargetMove = _reflectionBody.ReturnForce(collision, ReflectionPower);
-        RB.linearVelocity = TargetMove;
-
     }
 
     private void OnCollisionExit2D(Collision2D collision)

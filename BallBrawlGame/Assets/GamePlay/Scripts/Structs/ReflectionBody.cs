@@ -11,24 +11,23 @@ public struct ReflectionBody
 
     public Vector2 ReturnForce(Collision2D col, float Power)
     {
-        Vector2 direction;
-        var enemy = col.gameObject.GetComponent<IPVP>();
-        if (enemy != null)
-            return col.otherRigidbody.linearVelocity;
+        Rigidbody2D colVelocity = col.gameObject.GetComponent<Rigidbody2D>();
+        if (colVelocity != null)
+        {
+     
+            LastVelocity = LastVelocity - col.rigidbody.linearVelocity;
+        }
 
-        direction = Vector2.Reflect(LastVelocity.normalized, col.contacts[0].normal).normalized;
 
+        Vector2 direction = Vector2.Reflect(LastVelocity.normalized, col.contacts[0].normal.normalized);
         float speed = LastVelocity.magnitude * (Power / 100);
-
         return direction * speed;
     }
 
 
 
+
 }
-
-
-public interface IPVP { }
 
 
 

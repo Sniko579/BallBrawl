@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraDistance : MonoBehaviour
@@ -21,8 +20,7 @@ public class CameraDistance : MonoBehaviour
     float _cameraDownLimet;
     [Header("GeneralSetting")]
     [SerializeField] float SpeedFollow;
-    [SerializeField] Vector2 FollowStep;
-
+ 
 
 
     //private
@@ -32,7 +30,10 @@ public class CameraDistance : MonoBehaviour
 
     private void OnValidate()
     {
+        m_Target = FindAnyObjectByType<Player>().transform;
         Initializing();
+        CameraFallow();
+
     }
     void Start()
     {
@@ -42,16 +43,17 @@ public class CameraDistance : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       
+        CameraFallow();
 
     }
     private void FixedUpdate()
     {
-
-        CameraFallow();
-
     }
     private void CameraFallow()
     {
+
+       
         if (m_Target.position.x > _cameraRightLimet || m_Target.position.x < _cameraLeftLimet)
         {
             if (m_Target.position.x > _cameraBox.x)
@@ -62,9 +64,9 @@ public class CameraDistance : MonoBehaviour
         else
         {
             _currentPosition.x = Mathf.Lerp(_currentPosition.x, m_Target.position.x, Time.fixedDeltaTime * SpeedFollow);
-        } 
-        
-        
+        }
+
+
         if (m_Target.position.y > _cameraUpLimet || m_Target.position.y < _cameraDownLimet)
         {
             if (m_Target.position.y > _cameraBox.y)
@@ -77,8 +79,9 @@ public class CameraDistance : MonoBehaviour
             _currentPosition.y = Mathf.Lerp(_currentPosition.y, m_Target.position.y, Time.fixedDeltaTime * SpeedFollow);
         }
 
+      
 
-        GetComponent<Camera>().transform.position = _currentPosition + FollowStep;
+        GetComponent<Camera>().transform.position = _currentPosition;
     }
 
 
@@ -92,9 +95,9 @@ public class CameraDistance : MonoBehaviour
         _cameraDownLimet = _cameraBox.y - DistanceYDown;
     }
 
-    
-   
-   
+
+
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

@@ -3,7 +3,7 @@ using CustomBehavior;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
+public class EnemyAI : MonoBehaviour
 {
     [Header("Requires")]
     [SerializeField] GlobalVariables Sc_GlobalVariables;
@@ -22,25 +22,13 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     bool _isInShootPoint;
 
 
-    #region Movement Var
-
-    float _moveSpeed;
-    float _acceleration;
-    float _airAcceleration;
-
-    float _jumpHeight;
+   
+    
     //private
     private Vector2 _targetMove;
     private PhysicForce s_ForceMove;
 
-    #endregion
 
-    #region Dash Var
-    float _dashSpeed = 50;
-    float _dashTime = 0.5f;
-    float _dashCoolDown = 0.5f;
-    float _dashAcceleration = 20f;
-    float _dashDeceleration = 20f;
 
     float _dashTimer;
     float _dashCoolDownTimer;
@@ -50,54 +38,15 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
     public static bool IsDashing;
 
-    #endregion
+   
 
-    #region Bounceness System Var
-
-    float _reflectionPower;
-    ReflectionBody s_ReflectionBody;
-
-    #endregion
-
-    #region Gravity Var
-    float _noramlGravity;
-    float _fallGravity;
-    float _dashGravity;
-    #endregion
+ 
 
 
 
-    private void OnEnable()
-    {
-        Sc_GlobalVariables.GlobalDatas.Add(this);
-        UpdateVaribles();
-    }
-    private void OnDisable()
-    {
-        Sc_GlobalVariables.GlobalDatas.Remove(this);
-    }
-    public void UpdateVaribles()
-    {
-        // Dash
-        _dashSpeed = Sc_GlobalVariables.DashSpeed;
-        _dashTime = Sc_GlobalVariables.DashTime;
-        _dashCoolDown = Sc_GlobalVariables.DashCoolDown;
-        _dashAcceleration = Sc_GlobalVariables.DashAcceleration;
-        _dashDeceleration = Sc_GlobalVariables.DashDeceleration;
-        // Gravity
-        _noramlGravity = Sc_GlobalVariables.NoramlGravity;
-        _fallGravity = Sc_GlobalVariables.FallGravity;
-        _dashGravity = Sc_GlobalVariables.DashGravity;
-        // Bounceness
-        _reflectionPower = Sc_GlobalVariables.ReflectionPower;
-        // Movement
-        _moveSpeed = Sc_GlobalVariables.MoveSpeed;
-        _acceleration = Sc_GlobalVariables.Acceleration;
-        _airAcceleration = Sc_GlobalVariables.AirAcceleration;
-        _jumpHeight = Sc_GlobalVariables.JumpHeight;
-    }
 
 
+    
 
     private void Start()
     {
@@ -111,7 +60,7 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     private void Update()
     {
         s_ForceMove.SetCurrentVelocity(RB.linearVelocity);
-        s_ReflectionBody.SetVelocity(RB.linearVelocity);
+ 
 
     }
     private void FixedUpdate()
@@ -130,26 +79,26 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
         if (_isGround)
         {
             RB.linearVelocityY = _targetMove.y;
-            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, _acceleration).x;
+            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, Sc_GlobalVariables.Acceleration).x;
         }
         else
         {
-            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, _airAcceleration).x;
+            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, Sc_GlobalVariables.AirAcceleration).x;
         }
 
 
         if (_isInShootPoint)
         {
-            _targetMove.x = NormalDir(Target.position).x * _moveSpeed;
+            _targetMove.x = NormalDir(Target.position).x * Sc_GlobalVariables.MoveSpeed;
         }
         else
         {
             
             if (Vector2.Distance(transform.position , Target.position) < ZoneRadius)
             {
-                _targetMove.y = _jumpHeight;
+                _targetMove.y = Sc_GlobalVariables.MoveSpeed;
             }
-            _targetMove.x = NormalDir(ShootPoint.position).x * _moveSpeed;
+            _targetMove.x = NormalDir(ShootPoint.position).x * Sc_GlobalVariables.MoveSpeed;
         }
         
 
@@ -247,8 +196,8 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
             _dashTimer -= Time.fixedDeltaTime;
             IsDashing = true;
 
-            _targetMove = direction * _dashSpeed;
-            RB.linearVelocity = s_ForceMove.GetForceByT(_targetMove, _dashAcceleration);
+            _targetMove = direction * Sc_GlobalVariables.DashSpeed;
+            RB.linearVelocity = s_ForceMove.GetForceByT(_targetMove, Sc_GlobalVariables.DashAcceleration);
         }
         else if (_dashCoolDownTimer > 0)
         {
@@ -257,24 +206,24 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
 
             _targetMove.x = Vector2.one.x;
             _targetMove.y = Vector2.one.y;
-            RB.linearVelocity = s_ForceMove.GetForceByT(_targetMove, _dashDeceleration);
+            RB.linearVelocity = s_ForceMove.GetForceByT(_targetMove, Sc_GlobalVariables.DashDeceleration);
         }
         else
         {
             _dashHasFinished = true;
-            _dashTimer = _dashTime;
-            _dashCoolDownTimer = _dashCoolDown;
+            _dashTimer = Sc_GlobalVariables.DashTime;
+            _dashCoolDownTimer = Sc_GlobalVariables.DashCoolDown;
         }
 
     }
     private void GravityHandler()
     {
         if (IsDashing)
-            RB.gravityScale = _dashGravity;
+            RB.gravityScale = Sc_GlobalVariables.DashGravity;
         else if (RB.linearVelocityY < -0.1)
-            RB.gravityScale = _fallGravity;
+            RB.gravityScale = Sc_GlobalVariables.FallGravity;
         else
-            RB.gravityScale = _noramlGravity;
+            RB.gravityScale = Sc_GlobalVariables.NoramlGravity;
     }
 
 
@@ -283,16 +232,14 @@ public class EnemyAI : MonoBehaviour, IPVP, IGlobalData
     // Unity Functions
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        _targetMove = s_ReflectionBody.ReturnForce(collision, _reflectionPower);
+   
 
         if (collision.gameObject.CompareTag("Ground"))
         {
             _isGround = true;
-            RB.linearVelocityX = s_ForceMove.GetForceByT(_targetMove, Sc_GlobalVariables.Deceleration).x;
-            RB.linearVelocityY = _targetMove.y;
+           
         }
-        else
-            RB.linearVelocity = _targetMove;
+        
 
 
     }

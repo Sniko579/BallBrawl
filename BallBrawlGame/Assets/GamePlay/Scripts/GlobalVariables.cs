@@ -10,6 +10,8 @@ public class GlobalVariables : ScriptableObject
     public float JumpHeight = 4f;
     public float Acceleration = 30f;
     public float AirAcceleration = 30f;
+    public float JumpAcceleration = 30f;
+    public float AirDeceleration = 30f;
     public float Deceleration = 30f;
 
     [Header("Dash Setting")]

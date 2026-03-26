@@ -43,11 +43,23 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: BackGround
+  - name: Sky
     uniqueID: 1094524793
+    locked: 0
+  - name: School
+    uniqueID: 2861190895
+    locked: 0
+  - name: BackGrass
+    uniqueID: 3889465695
     locked: 0
   - name: Ground
     uniqueID: 3689522143
+    locked: 0
+  - name: Goal
+    uniqueID: 1895458621
+    locked: 0
+  - name: ForthGrass
+    uniqueID: 1791945655
     locked: 0
   - name: DashEffect
     uniqueID: 3790633401

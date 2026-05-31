@@ -9,7 +9,7 @@ public class RollingBall : MonoBehaviour
     void Start()
     {
         _rb = GetComponentInParent<Rigidbody2D>();
-        _radius = GetComponentInParent<CircleCollider2D>().radius;
+        _radius = GetComponentInParent<CapsuleCollider2D>().size.x * 0.5f * transform.lossyScale.x;
     }
 
     // Update is called once per frame

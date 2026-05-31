@@ -21,8 +21,6 @@ public class GlobalVariables : ScriptableObject
     public float DashAcceleration = 8f;
     public float DashDeceleration = 4f;
 
-    [Header("Bounceness Setting")]
-    [Range(0f, 100f)] public float ReflectionPower = 50f;
 
     [Header("Gravity Setting")]
     public float NoramlGravity = 1f;
@@ -30,24 +28,7 @@ public class GlobalVariables : ScriptableObject
     public float DashGravity = 1f;
 
 
-    public List<IGlobalData> GlobalDatas = new List<IGlobalData>();
-    private void OnValidate()
-    {
-        Change();
-    }
-
-    void Change()
-    {
-        foreach (var data in GlobalDatas)
-        {
-            data.UpdateVaribles();
-        }
-    }
 
 }
 
-public interface IGlobalData
-{      
-    void UpdateVaribles();
 
-}

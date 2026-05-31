@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveSpeed: 8
   JumpHeight: 4
-  Acceleration: 10
+  Acceleration: 6
   AirAcceleration: 2
   JumpAcceleration: 1.8
   AirDeceleration: 0.55
@@ -24,7 +24,6 @@ MonoBehaviour:
   DashCoolDown: 0.6
   DashAcceleration: 10
   DashDeceleration: 1.81
-  ReflectionPower: 50
   NoramlGravity: 1.15
   FallGravity: 1.37
   DashGravity: 0.8
